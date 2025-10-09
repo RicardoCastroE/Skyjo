@@ -11,11 +11,21 @@
             box-sizing: border-box;
         }
 
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
+        }
+        
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
         }
 
         .container {
@@ -25,32 +35,48 @@
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            padding-top: 20px;
+            margin-bottom: 20px;
+            padding-top: 10px;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             color: #fff;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
             font-weight: 800;
         }
 
         .header p {
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
             font-weight: 600;
+        }
+
+        @media (min-width: 768px) {
+            .header {
+                margin-bottom: 30px;
+                padding-top: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
+            
+            .header p {
+                font-size: 1.2rem;
+            }
         }
 
         .game-over {
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
             color: white;
             text-align: center;
-            padding: 25px;
-            border-radius: 20px;
-            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             border: 3px solid rgba(255,255,255,0.3);
             animation: pulse 2s infinite;
@@ -62,9 +88,22 @@
         }
 
         .game-over h2 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        @media (min-width: 768px) {
+            .game-over {
+                padding: 25px;
+                border-radius: 20px;
+                margin-bottom: 30px;
+            }
+            
+            .game-over h2 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
         }
 
         .controls-container {
@@ -80,17 +119,25 @@
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 12px 20px;
             border-radius: 50px;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
             transition: all 0.3s;
             border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        @media (min-width: 768px) {
+            .reset-btn, .add-player-btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+                gap: 10px;
+            }
         }
 
         .add-player-btn {
@@ -122,20 +169,35 @@
 
         .player-card {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            padding: 28px;
+            border-radius: 20px;
+            padding: 18px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             border: 3px solid rgba(255,255,255,0.5);
             backdrop-filter: blur(10px);
             position: relative;
         }
 
+        @media (min-width: 768px) {
+            .player-card {
+                border-radius: 25px;
+                padding: 28px;
+            }
+        }
+
         .player-card h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             font-weight: 800;
             color: #7c3aed;
+            padding-right: 35px;
+        }
+
+        @media (min-width: 768px) {
+            .player-card h2 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
         }
 
         .remove-player-btn {
@@ -164,10 +226,18 @@
 
         .total-score {
             text-align: center;
-            padding: 25px;
-            border-radius: 20px;
-            margin-bottom: 20px;
+            padding: 18px;
+            border-radius: 15px;
+            margin-bottom: 15px;
             border: 3px solid rgba(255,255,255,0.5);
+        }
+
+        @media (min-width: 768px) {
+            .total-score {
+                padding: 25px;
+                border-radius: 20px;
+                margin-bottom: 20px;
+            }
         }
 
         .total-score.normal {
@@ -186,7 +256,7 @@
         }
 
         .total-score p:first-child {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: rgba(0,0,0,0.6);
             margin-bottom: 5px;
             font-weight: 600;
@@ -195,9 +265,19 @@
         }
 
         .total-score .score {
-            font-size: 3rem;
+            font-size: 2.2rem;
             font-weight: 900;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @media (min-width: 768px) {
+            .total-score p:first-child {
+                font-size: 0.9rem;
+            }
+            
+            .total-score .score {
+                font-size: 3rem;
+            }
         }
 
         .total-score .score.normal {
@@ -229,13 +309,21 @@
 
         .input-group input {
             flex: 1;
-            padding: 14px 18px;
+            padding: 12px 14px;
             border: 3px solid #e2e8f0;
-            border-radius: 15px;
-            font-size: 1.1rem;
+            border-radius: 12px;
+            font-size: 1rem;
             font-weight: 600;
             transition: all 0.3s;
             background: white;
+        }
+
+        @media (min-width: 768px) {
+            .input-group input {
+                padding: 14px 18px;
+                border-radius: 15px;
+                font-size: 1.1rem;
+            }
         }
 
         .input-group input:focus {
@@ -459,7 +547,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎲 Skyjo Score Tracker 🎲</h1>
+            <h1>🎲 Skyjo Score MOBILE Tracker 🎲</h1>
             <p>First to 100 loses!</p>
         </div>
 
