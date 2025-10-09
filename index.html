@@ -3,175 +3,542 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skyjo Score Tracker</title>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    html {
-        -webkit-text-size-adjust: 100%;
-    }
-
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        min-height: 100vh;
-        padding: 20px env(safe-area-inset-right) calc(20px + env(safe-area-inset-bottom)) env(safe-area-inset-left);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .header {
-        text-align: center;
-        margin-bottom: 25px;
-        padding-top: 15px;
-    }
-
-    .header h1 {
-        font-size: clamp(1.8rem, 5vw, 2.5rem);
-        color: #fff;
-        margin-bottom: 8px;
-        text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
-        font-weight: 800;
-        line-height: 1.2;
-    }
-
-    .header p {
-        color: #fff;
-        font-size: clamp(1rem, 3.5vw, 1.2rem);
-        font-weight: 600;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-    }
-
-    .controls-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 25px;
-    }
-
-    .reset-btn, .add-player-btn {
-        flex: 1 1 140px;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        border: none;
-        padding: 12px 18px;
-        border-radius: 40px;
-        font-size: clamp(0.9rem, 3.5vw, 1.1rem);
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        transition: all 0.3s;
-        border: 2px solid rgba(255,255,255,0.3);
-    }
-
-    .add-player-btn {
-        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-    }
-
-    .reset-btn:hover, .add-player-btn:hover {
-        transform: translateY(-2px);
-    }
-
-    .players-grid {
-        display: grid;
-        gap: 20px;
-        grid-template-columns: 1fr;
-    }
-
-    @media (min-width: 600px) {
-        .players-grid {
-            grid-template-columns: repeat(2, 1fr);
+    <title>Skyjo Score Tracker MOBILE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    }
 
-    @media (min-width: 1000px) {
-        .players-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    .player-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        border: 2px solid rgba(255,255,255,0.4);
-    }
-
-    .player-card h2 {
-        font-size: clamp(1.4rem, 4.5vw, 2rem);
-        margin-bottom: 15px;
-        color: #7c3aed;
-        text-align: center;
-    }
-
-    input, button {
-        font-size: inherit;
-        touch-action: manipulation;
-    }
-
-    .input-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .input-group input {
-        flex: 1 1 100%;
-        min-width: 0;
-        padding: 12px 14px;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-    }
-
-    @media (min-width: 400px) {
-        .input-group input {
-            flex: 2;
-        }
-    }
-
-    .add-btn {
-        flex: 1;
-        padding: 12px 16px;
-        border-radius: 12px;
-    }
-
-    .history-list {
-        max-height: 200px;
-        overflow-y: auto;
-    }
-
-    .modal-content {
-        width: 90%;
-        max-width: 350px;
-        padding: 25px;
-        border-radius: 20px;
-    }
-
-    /* Fix for iPhone bottom safe area (home bar) */
-    @supports(padding:max(0px)) {
         body {
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 12px;
         }
-    }
-</style>
+        
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+        }
 
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-top: 10px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 5px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            font-weight: 800;
+        }
+
+        .header p {
+            color: #fff;
+            font-size: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-weight: 600;
+        }
+
+        @media (min-width: 768px) {
+            .header {
+                margin-bottom: 30px;
+                padding-top: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
+            
+            .header p {
+                font-size: 1.2rem;
+            }
+        }
+
+        .game-over {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255,255,255,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .game-over h2 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        @media (min-width: 768px) {
+            .game-over {
+                padding: 25px;
+                border-radius: 20px;
+                margin-bottom: 30px;
+            }
+            
+            .game-over h2 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
+        }
+
+        .controls-container {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .reset-btn, .add-player-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        @media (min-width: 768px) {
+            .reset-btn, .add-player-btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+                gap: 10px;
+            }
+        }
+
+        .add-player-btn {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+        }
+
+        .reset-btn:hover, .add-player-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .players-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .players-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .player-card {
+                border-radius: 25px;
+                padding: 28px;
+            }
+        }
+
+        .player-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            font-weight: 800;
+            color: #7c3aed;
+            padding-right: 35px;
+        }
+
+        @media (min-width: 768px) {
+            .player-card h2 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+        }
+
+        .remove-player-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .remove-player-btn:hover {
+            background: rgba(220, 38, 38, 1);
+            transform: scale(1.1);
+        }
+
+        .total-score {
+            text-align: center;
+            padding: 18px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 3px solid rgba(255,255,255,0.5);
+        }
+
+        @media (min-width: 768px) {
+            .total-score {
+                padding: 25px;
+                border-radius: 20px;
+                margin-bottom: 20px;
+            }
+        }
+
+        .total-score.normal {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+
+        .total-score.danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .total-score p:first-child {
+            font-size: 0.85rem;
+            color: rgba(0,0,0,0.6);
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .total-score .score {
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @media (min-width: 768px) {
+            .total-score p:first-child {
+                font-size: 0.9rem;
+            }
+            
+            .total-score .score {
+                font-size: 3rem;
+            }
+        }
+
+        .total-score .score.normal {
+            color: #155e75;
+        }
+
+        .total-score .score.danger {
+            color: #dc2626;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #4a5568;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px 14px;
+            border: 3px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        @media (min-width: 768px) {
+            .input-group input {
+                padding: 14px 18px;
+                border-radius: 15px;
+                font-size: 1.1rem;
+            }
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.2);
+            transform: scale(1.02);
+        }
+
+        .input-group input:disabled {
+            background: #f1f5f9;
+            cursor: not-allowed;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            font-size: 1rem;
+        }
+
+        .add-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .add-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .remove-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .remove-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+        }
+
+        .history-section h3 {
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        .history-list {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .history-empty {
+            color: #92400e;
+            text-align: center;
+            padding: 20px 0;
+            font-weight: 600;
+        }
+
+        .history-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 2px solid rgba(251, 191, 36, 0.2);
+        }
+
+        .history-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .history-item .round {
+            color: #78716c;
+            font-weight: 600;
+        }
+
+        .history-item .score {
+            font-weight: 800;
+            color: #7c3aed;
+            font-size: 1.1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(251, 191, 36, 0.2);
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: #fbbf24;
+            border-radius: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #7c3aed;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .modal-content input:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: white;
+        }
+
+        .modal-btn.cancel {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .icon {
+            display: inline-block;
+            width: 1.2em;
+            height: 1.2em;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
