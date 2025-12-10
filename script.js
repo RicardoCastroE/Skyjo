@@ -1,35 +1,25 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- STATE MANAGEMENT ---
     const defaultState = {
         players: [],
-        scores: {}, // scores[playerId] = [score1, score2, ...]
+        scores: {},
         displayNames: {},
-        firstToFinish: {} // firstToFinish[roundIndex] = playerId or null
+        firstToFinish: {}
     };
 
-    let gameState = JSON.parse(localStorage.getItem('skyjoGameState')) || defaultState;
-    
-    // Migrate old state to include firstToFinish if missing
-    if (!gameState.firstToFinish) {
-        gameState.firstToFinish = {};
-    }
+    let gameState = JSON.parse(JSON.stringify(defaultState));
+    let scoreboardVisible = false;
 
-    function saveGameState() {
-        localStorage.setItem('skyjoGameState', JSON.stringify(gameState));
-    }
-
-    // --- DOM ELEMENTS ---
     const playersGrid = document.getElementById('playersGrid');
     const gameOverMessageDiv = document.getElementById('gameOverMessage');
     const gameOverText = document.getElementById('gameOverText');
     const addPlayerModal = document.getElementById('addPlayerModal');
     const newPlayerNameInput = document.getElementById('newPlayerNameInput');
+    const scoreboardContainer = document.getElementById('scoreboardContainer');
 
     // --- GAME LOGIC HELPERS ---
     function getCurrentRound() {
-        // The current round is the minimum number of scores any player has
         if (gameState.players.length === 0) return 0;
         return Math.min(...gameState.players.map(p => gameState.scores[p]?.length || 0));
     }
@@ -37,14 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function canAddScore(playerId) {
         const currentRound = getCurrentRound();
         const playerScores = gameState.scores[playerId]?.length || 0;
-        // Can only add if player has exactly currentRound scores (not ahead)
         return playerScores === currentRound;
     }
 
     function isRoundComplete() {
         if (gameState.players.length === 0) return true;
         const roundCounts = gameState.players.map(p => gameState.scores[p]?.length || 0);
-        // Round is complete when all players have the same number of scores
         return roundCounts.every(count => count === roundCounts[0]);
     }
 
@@ -55,18 +43,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function getEffectiveScoreForRound(playerId, roundIndex) {
         const score = getScoreForRound(playerId, roundIndex);
         const finisherId = gameState.firstToFinish[roundIndex];
-        
-        // If this player was first to finish
+
         if (finisherId === playerId) {
             const finisherScore = score;
-            // Check if any other player beat the finisher's score
             const wasBeat = gameState.players.some(p => {
                 if (p === playerId) return false;
                 return getScoreForRound(p, roundIndex) < finisherScore;
             });
             return wasBeat ? score * 2 : score;
         }
-        
+
         return score;
     }
 
@@ -80,6 +66,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- RENDER FUNCTIONS ---
+    function renderScoreboard() {
+        const sorted = gameState.players
+            .map(p => ({
+                id: p,
+                name: gameState.displayNames[p],
+                score: getTotalScore(p)
+            }))
+            .sort((a, b) => a.score - b.score);
+
+        const html = `
+            <div class="scoreboard">
+                <h2>📊 Current Scores</h2>
+                <div class="scoreboard-list">
+                    ${sorted.map((p, i) => `
+                        <div class="scoreboard-item ${p.score >= 100 ? 'danger' : ''}">
+                            <span class="rank">${i + 1}.</span>
+                            <span class="name">${p.name}</span>
+                            <span class="score">${p.score}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        scoreboardContainer.innerHTML = html;
+    }
+
     function renderAllPlayers() {
         playersGrid.innerHTML = '';
         gameState.players.forEach(player => {
@@ -87,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDisplay(player);
         });
         checkGameOver();
+        if (scoreboardVisible) renderScoreboard();
     }
 
     function createPlayerCard(playerId) {
@@ -98,37 +111,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         card.innerHTML = `
             ${canRemove ? `<button class="remove-player-btn" data-player-id="${playerId}">×</button>` : ''}
-            <h2>🎮 ${displayName}</h2>
-            
+            <h2>${displayName}</h2>
+
             <div id="${playerId}Total" class="total-score normal">
-                <p>Total Score</p>
+                <p>Total</p>
                 <p class="score normal">0</p>
             </div>
 
             <div class="input-section">
-                <label>Add New Score (Round <span id="${playerId}RoundNum">1</span>)</label>
+                <label>Round <span id="${playerId}RoundNum">1</span></label>
                 <div class="input-group">
-                    <input type="number" class="score-input" data-player-id="${playerId}" placeholder="Enter score">
-                    <button class="add-btn" data-player-id="${playerId}">
-                        <span style="font-size: 1.2rem;">+</span> Add
-                    </button>
+                    <input type="number" class="score-input" data-player-id="${playerId}" placeholder="Score">
+                    <button class="add-btn" data-player-id="${playerId}">+</button>
                 </div>
                 <div class="checkbox-group">
                     <label>
                         <input type="checkbox" class="first-finish-checkbox" data-player-id="${playerId}">
-                        First to Finish (doubles if beaten)
+                        1st to Finish
                     </label>
                 </div>
             </div>
 
-            <button class="remove-btn hidden" data-player-id="${playerId}">
-                <span>🗑️</span> Remove Last Score
-            </button>
+            <button class="remove-btn hidden" data-player-id="${playerId}">🗑️ Remove</button>
 
             <div class="history-section">
-                <h3>📊 Score History</h3>
+                <h3>History</h3>
                 <div class="history-list" id="${playerId}History">
-                    <p class="history-empty">No scores yet</p>
+                    <p class="history-empty">No scores</p>
                 </div>
             </div>
         `;
@@ -182,14 +191,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const input = document.querySelector(`.score-input[data-player-id="${playerId}"]`);
         const addBtn = document.querySelector(`.add-btn[data-player-id="${playerId}"]`);
         const checkbox = document.querySelector(`.first-finish-checkbox[data-player-id="${playerId}"]`);
-        
+
         const canAdd = canAddScore(playerId);
-        
+
         if (input) input.disabled = !canAdd;
         if (addBtn) addBtn.disabled = !canAdd;
         if (checkbox) {
             checkbox.disabled = !canAdd;
-            // Update checkbox state for current round
             const currentRound = gameState.scores[playerId]?.length || 0;
             checkbox.checked = gameState.firstToFinish[currentRound] === playerId;
         }
@@ -200,19 +208,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const scores = gameState.scores[playerId] || [];
 
         if (scores.length === 0) {
-            historyDiv.innerHTML = '<p class="history-empty">No scores yet</p>';
+            historyDiv.innerHTML = '<p class="history-empty">No scores</p>';
         } else {
             historyDiv.innerHTML = scores.map((score, index) => {
                 const effectiveScore = getEffectiveScoreForRound(playerId, index);
                 const isDoubled = effectiveScore !== score;
-                const isFirstToFinish = gameState.firstToFinish[index] === playerId;
-                
+
                 return `
                     <div class="history-item ${isDoubled ? 'doubled' : ''}">
-                        <span class="round">Round ${index + 1} ${isFirstToFinish ? '🏁' : ''}</span>
-                        <span class="score">
-                            ${score}${isDoubled ? ` (×2 = ${effectiveScore})` : ''}
-                        </span>
+                        <span class="round">R${index + 1}</span>
+                        <span class="score">${score}${isDoubled ? `×2` : ''}</span>
                     </div>
                 `;
             }).join('');
@@ -223,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- GAME LOGIC FUNCTIONS ---
     function addScore(playerId) {
         if (!canAddScore(playerId)) {
-            alert('You must wait for all players to complete the current round before adding a new score.');
+            alert('Wait for all players to complete the round.');
             return;
         }
 
@@ -233,23 +238,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const score = parseInt(input.value, 10);
         if (isNaN(score)) {
-            alert('Please enter a valid score.');
+            alert('Enter a valid score.');
             return;
         }
 
         const roundIndex = gameState.scores[playerId]?.length || 0;
 
-        // Handle first to finish checkbox
         if (checkbox && checkbox.checked) {
-            // Check if someone else already claimed first to finish for this round
             if (gameState.firstToFinish[roundIndex] && gameState.firstToFinish[roundIndex] !== playerId) {
-                const otherPlayer = gameState.displayNames[gameState.firstToFinish[roundIndex]];
-                alert(`${otherPlayer} already claimed First to Finish for this round.`);
+                alert('Someone already claimed 1st to Finish for this round.');
                 return;
             }
             gameState.firstToFinish[roundIndex] = playerId;
         } else {
-            // If unchecking, remove the first to finish marker
             if (gameState.firstToFinish[roundIndex] === playerId) {
                 delete gameState.firstToFinish[roundIndex];
             }
@@ -258,16 +259,13 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState.scores[playerId].push(score);
         input.value = '';
         if (checkbox) checkbox.checked = false;
-        
-        // Update all players since round state changed
+
         gameState.players.forEach(p => updateDisplay(p));
-        
-        // Only check game over if round is complete
+
         if (isRoundComplete()) {
             checkGameOver();
         }
-        
-        saveGameState();
+        if (scoreboardVisible) renderScoreboard();
     }
 
     function removeLastScore(playerId) {
@@ -275,28 +273,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (playerScores.length === 0) return;
 
         const currentRound = getCurrentRound();
-        // Can only remove if this player has scores in the most recent incomplete round
         if (playerScores.length !== currentRound + 1) {
-            alert('You can only remove scores from the current round.');
+            alert('Can only remove from current round.');
             return;
         }
 
         const removedRoundIndex = playerScores.length - 1;
         gameState.scores[playerId].pop();
-        
-        // Remove first to finish marker if this player had it
+
         if (gameState.firstToFinish[removedRoundIndex] === playerId) {
             delete gameState.firstToFinish[removedRoundIndex];
         }
 
-        // Update all players
         gameState.players.forEach(p => updateDisplay(p));
         checkGameOver();
-        saveGameState();
+        if (scoreboardVisible) renderScoreboard();
     }
 
     function checkGameOver() {
-        // Only check for game over if the current round is complete
         if (!isRoundComplete()) {
             gameOverMessageDiv.classList.add('hidden');
             return;
@@ -314,14 +308,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isGameOver) {
             gameOverMessageDiv.classList.remove('hidden');
-            
+
             if (losers.length === 1) {
-                gameOverText.innerHTML = `💥 ${losers[0]} Loses! 💥`;
+                gameOverText.innerHTML = `👥 ${losers[0]} Loses! 👥`;
             } else {
-                gameOverText.innerHTML = `💥 ${losers.join(' & ')} Lose! 💥`;
+                gameOverText.innerHTML = `👥 ${losers.join(' & ')} Lose! 👥`;
             }
 
-            // Find and declare the winner
             const nonLosers = gameState.players
                 .filter(p => getTotalScore(p) < 100)
                 .map(p => ({ name: gameState.displayNames[p], score: getTotalScore(p) }))
@@ -346,7 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.firstToFinish = {};
             renderAllPlayers();
             gameOverMessageDiv.classList.add('hidden');
-            saveGameState();
         }
     }
 
@@ -362,9 +354,8 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.players.push(playerId);
             gameState.scores[playerId] = [];
             gameState.displayNames[playerId] = name;
-            
+
             renderAllPlayers();
-            saveGameState();
             hideAddPlayerModal();
         }
     }
@@ -379,16 +370,14 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.players = gameState.players.filter(p => p !== playerId);
             delete gameState.scores[playerId];
             delete gameState.displayNames[playerId];
-            
-            // Clean up firstToFinish references
+
             Object.keys(gameState.firstToFinish).forEach(roundIndex => {
                 if (gameState.firstToFinish[roundIndex] === playerId) {
                     delete gameState.firstToFinish[roundIndex];
                 }
             });
-            
+
             renderAllPlayers();
-            saveGameState();
         }
     }
 
@@ -406,9 +395,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- EVENT LISTENERS ---
     document.querySelector('.reset-btn').addEventListener('click', resetGame);
     document.querySelector('.add-player-btn').addEventListener('click', showAddPlayerModal);
+    document.querySelector('.scoreboard-btn').addEventListener('click', () => {
+        scoreboardVisible = !scoreboardVisible;
+        if (scoreboardVisible) {
+            renderScoreboard();
+        } else {
+            scoreboardContainer.innerHTML = '';
+        }
+    });
     document.getElementById('confirmAddPlayerBtn').addEventListener('click', confirmAddPlayer);
     document.getElementById('cancelAddPlayerBtn').addEventListener('click', hideAddPlayerModal);
-    
+
     newPlayerNameInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') confirmAddPlayer();
     });

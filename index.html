@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skyjo Score Tracker</title>
     <link rel="stylesheet" href="style.css">
-    <div class="version-badge">v2.2.0</div>
 </head>
 <body>
     <div class="container">
@@ -20,16 +19,12 @@
         </div>
 
         <div class="controls-container">
-            <button class="reset-btn">
-                <span style="font-size: 1.3rem;">↻</span>
-                Reset Game
-            </button>
-            <button class="add-player-btn">
-                <span style="font-size: 1.3rem;">+</span>
-                Add Player
-            </button>
+            <button class="reset-btn">↻ Reset</button>
+            <button class="add-player-btn">+ Add Player</button>
+            <button class="scoreboard-btn">📊 Scores</button>
         </div>
 
+        <div id="scoreboardContainer"></div>
         <div class="players-grid" id="playersGrid"></div>
     </div>
 
