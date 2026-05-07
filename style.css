@@ -82,8 +82,22 @@ body {
 
 .players-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 500px) {
+    .players-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 8px;
+    }
+}
+
+@media (max-width: 380px) {
+    .players-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
 }
 
 .player-card {
@@ -103,6 +117,28 @@ body {
     font-weight: 800;
     color: #7c3aed;
     padding-right: 28px;
+}
+
+@media (max-width: 500px) {
+    .player-card {
+        padding: 8px;
+    }
+
+    .player-card h2 {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+}
+
+@media (max-width: 380px) {
+    .player-card {
+        padding: 7px;
+    }
+
+    .player-card h2 {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+    }
 }
 
 .remove-player-btn {
@@ -175,6 +211,32 @@ body {
     color: #dc2626;
 }
 
+@media (max-width: 500px) {
+    .total-score {
+        padding: 5px 7px;
+        margin-bottom: 5px;
+    }
+
+    .total-score p:first-child {
+        font-size: 0.55rem;
+    }
+
+    .total-score .score {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .total-score {
+        padding: 4px 6px;
+        margin-bottom: 4px;
+    }
+
+    .total-score .score {
+        font-size: 1rem;
+    }
+}
+
 .input-section {
     margin-bottom: 10px;
 }
@@ -215,6 +277,46 @@ body {
 .input-group input:disabled {
     background: #f1f5f9;
     cursor: not-allowed;
+}
+
+@media (max-width: 500px) {
+    .input-section {
+        margin-bottom: 8px;
+    }
+
+    .input-section label {
+        font-size: 0.65rem;
+        margin-bottom: 3px;
+    }
+
+    .input-group {
+        gap: 5px;
+    }
+
+    .input-group input {
+        padding: 6px 8px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .input-section {
+        margin-bottom: 6px;
+    }
+
+    .input-section label {
+        font-size: 0.6rem;
+    }
+
+    .input-group {
+        gap: 4px;
+    }
+
+    .input-group input {
+        padding: 5px 6px;
+        font-size: 0.75rem;
+    }
 }
 
 .add-btn {
